@@ -214,7 +214,7 @@ public class UsenetApi
     /// <summary>
     /// Requests a download link for a specific usenet download wholly or file.
     /// </summary>
-    /// <param name="usenet_id">The ID of the usenet item to download.</param>
+    /// <param name="usenet_id">The download id of the usenet item to download.</param>
     /// <param name="file_id">The ID of the file within the usenet item (optional).</param>
     /// <param name="zip">
     /// Whether to download the entire item as a ZIP. Defaults to false. If true, file_id is ignored.
@@ -231,7 +231,7 @@ public class UsenetApi
         parameters["token"] = _store.BearerToken;
         parameters["usenet_id"] = usenet_id.ToString();
         parameters["file_id"] = file_id.ToString();
-        parameters["zip"] = zip.ToString();
+        //parameters["zip"] = zip.ToString();
 
         var uri = new UriBuilder("usenet/requestdl")
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ public class UsenetTest
     [Fact]
     public async Task HashInfo()
     {
-        var result = await _client.Usenet.GetHashInfoAsync("1c414b53446c0249abfc2bb705e42ffe");
+        var result = await _client.Usenet.GetHashInfoAsync("54248863835323fdd692da1e2adfb151");
 
         Assert.NotNull(result);
     }
@@ -54,12 +55,15 @@ public class UsenetTest
     }
 
     [Fact]
-    public async Task ControlTorrent()
+    public async Task ControlUsenet()
     {
-        var hash = "1c414b53446c0249abfc2bb705e42ffe";
+        var hash = "54248863835323fdd692da1e2adfb151";
         var action = "delete";
 
         var result = await _client.Usenet.ControlAsync(hash, action);
+
+        var link = "https://gist.github.com/sanderjo/aa1f9d4720696cc11640/raw/dd9a3e14df80353f2ad187cc5cd5f5dafe9f2d24/Big.Buck.Bunny%2520---%2520missing%2520segemnts.nzb";
+        await _client.Usenet.AddLinkAsync(link);
 
         Assert.True(result.Success);
     }
@@ -67,7 +71,7 @@ public class UsenetTest
     [Fact]
     public async Task CheckAvailability()
     {
-        var hash = "1c414b53446c0249abfc2bb705e42ffe";
+        var hash = "54248863835323fdd692da1e2adfb151";
         var result = await _client.Usenet.GetAvailabilityAsync(hash, false);
 
         Assert.True(result.Success);
@@ -76,16 +80,10 @@ public class UsenetTest
     [Fact]
     public async Task RequestDownload()
     {
-        var usenetId = 123;
-        var fileId = 456;
+        var usenet_item = await _client.Usenet.GetHashInfoAsync("54248863835323fdd692da1e2adfb151");
 
-        try
-        {
-            await _client.Usenet.RequestDownloadAsync(usenetId, fileId, false);
-        }
-        catch (TorBoxException)
-        {
-            Assert.True(true);
-        }
+        var result = await _client.Usenet.RequestDownloadAsync(Convert.ToInt32(usenet_item.Id), 0, false);
+
+        Assert.True(result.Success);
     }
 }

@@ -68,7 +68,7 @@ namespace TorBoxNET
         public bool DownloadPresent { get; set; }
 
         [JsonProperty("files")]
-        public List<TorrentInfoResultFile> Files { get; set; } = null!;
+        public List<TorrentInfoResultFile>? Files { get; set; } = null!;
 
         [JsonProperty("download_path")]
         public string DownloadPath { get; set; } = null!;
