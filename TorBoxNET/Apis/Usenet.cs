@@ -80,7 +80,7 @@ public class UsenetApi
     /// </returns>
     public async Task<UsenetInfoResult?> GetIdInfoAsync(int id, bool skipCache = false, CancellationToken cancellationToken = default)
     {
-        var currentDownload = await _requests.GetRequestAsync<Response<UsenetInfoResult?>>($"torrents/mylist?bypass_cache={skipCache}", true, cancellationToken);
+        var currentDownload = await _requests.GetRequestAsync<Response<UsenetInfoResult?>>($"usenet/mylist?bypass_cache={skipCache}", true, cancellationToken);
 
         return currentDownload?.Data;
     }

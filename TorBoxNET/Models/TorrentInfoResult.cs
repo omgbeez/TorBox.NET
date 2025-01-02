@@ -56,7 +56,7 @@ namespace TorBoxNET
         public int UploadSpeed { get; set; }
 
         [JsonProperty("eta")]
-        public int Eta { get; set; }
+        public Int64 Eta { get; set; }
 
         [JsonProperty("torrent_file")]
         public bool TorrentFile { get; set; }
