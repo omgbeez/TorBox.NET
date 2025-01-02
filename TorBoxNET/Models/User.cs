@@ -17,7 +17,7 @@ public class User
     public DateTimeOffset? UpdatedAt { get; set; }
 
     [JsonProperty("plan")]
-    public long? Plan { get; set; }
+    public int? Plan { get; set; }
 
     [JsonProperty("total_downloaded")]
     public long? TotalDownloaded { get; set; }
@@ -92,22 +92,22 @@ public class UserSettings
     public bool? ShowTrackerInTorrent { get; set; }
 
     [JsonProperty("stremio_quality")]
-    public long[]? StremioQuality { get; set; }
+    public int[]? StremioQuality { get; set; }
 
     [JsonProperty("stremio_resolution")]
-    public long[]? StremioResolution { get; set; }
+    public int[]? StremioResolution { get; set; }
 
     [JsonProperty("stremio_language")]
-    public long[]? StremioLanguage { get; set; }
+    public int[]? StremioLanguage { get; set; }
 
     [JsonProperty("stremio_cache")]
-    public long[]? StremioCache { get; set; }
+    public int[]? StremioCache { get; set; }
 
     [JsonProperty("stremio_size_lower")]
-    public long? StremioSizeLower { get; set; }
+    public int? StremioSizeLower { get; set; }
 
     [JsonProperty("stremio_size_upper")]
-    public long? StremioSizeUpper { get; set; }
+    public int? StremioSizeUpper { get; set; }
 
     [JsonProperty("google_drive_folder_id")]
     public string? GoogleDriveFolderId { get; set; }
@@ -128,10 +128,10 @@ public class UserSettings
     public bool? WebdavFlatten { get; set; }
 
     [JsonProperty("stremio_seed_torrents")]
-    public long? StremioSeedTorrents { get; set; }
+    public int? StremioSeedTorrents { get; set; }
 
     [JsonProperty("seed_torrents")]
-    public long? SeedTorrents { get; set; }
+    public int? SeedTorrents { get; set; }
 
     [JsonProperty("allow_zipped")]
     public bool? AllowZipped { get; set; }
