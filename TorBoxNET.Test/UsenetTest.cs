@@ -1,20 +1,24 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace TorBoxNET.Test;
 
 public class UsenetTest
 {
     private readonly TorBoxNetClient _client;
+    private readonly ITestOutputHelper _output;
 
-    public UsenetTest()
+
+    public UsenetTest(ITestOutputHelper output)
     {
+        _output = output;
         _client = new TorBoxNetClient();
         _client.UseApiAuthentication(Setup.API_KEY);
+
     }
 
     [Fact]
@@ -85,5 +89,17 @@ public class UsenetTest
         var result = await _client.Usenet.RequestDownloadAsync(Convert.ToInt32(usenet_item.Id), 0, false);
 
         Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task QueuedUsenetDownloads()
+    {
+        var downloads = await _client.Usenet.GetQueuedAsync(true);
+
+        var jsonOutput = JsonSerializer.Serialize(downloads, new JsonSerializerOptions { WriteIndented = true });
+
+        _output.WriteLine(jsonOutput);
+
+        Assert.NotNull(downloads);
     }
 }

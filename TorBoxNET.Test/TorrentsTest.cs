@@ -1,17 +1,22 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestPlatform.Utilities;
+using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace TorBoxNET.Test;
 
 public class TorrentsTest
 {
     private readonly TorBoxNetClient _client;
+    private readonly ITestOutputHelper _output;
 
-    public TorrentsTest()
+    public TorrentsTest(ITestOutputHelper output)
     {
+        _output = output;
         _client = new TorBoxNetClient();
         _client.UseApiAuthentication(Setup.API_KEY);
     }
@@ -36,6 +41,10 @@ public class TorrentsTest
     public async Task QueuedTorrents()
     {
         var result = await _client.Torrents.GetQueuedAsync(true);
+
+        var jsonOutput = JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true });
+
+        _output.WriteLine(jsonOutput);
 
         Assert.NotNull(result);
     }

@@ -12,11 +12,13 @@ public class TorrentsApi
 {
     private readonly Requests _requests;
     private readonly Store _store;
+    private readonly QueuedApi _queued;
 
-    internal TorrentsApi(HttpClient httpClient, Store store)
+    internal TorrentsApi(HttpClient httpClient, Store store, QueuedApi queued)
     {
         _requests = new Requests(httpClient, store);
         _store = store;
+        _queued = queued;
     }
 
     /// <summary>
@@ -68,32 +70,36 @@ public class TorrentsApi
     }
 
     /// <summary>
-    /// Retrieves a list of torrents currently queued for download.
+    /// Gets the list of user's queued torrents.
     /// </summary>
-    /// <param name="skipCache">
-    /// Whether to bypass the cache and retrieve fresh data from the server. Defaults to false.
-    /// </param>
-    /// <param name="cancellationToken">
-    /// A token to cancel the task if necessary.
-    /// </param>
-    /// <returns>
-    /// A list of queued torrents if the request succeeds, otherwise null.
-    /// </returns>
-    public async Task<List<TorrentInfoResult>?> GetQueuedAsync(bool skipCache = false, CancellationToken cancellationToken = default)
+    /// <param name="skipCache">Whether to bypass the cache and retrieve fresh data from the server. Defaults to false.</param>
+    /// <param name="cancellationToken">A token to cancel the task if necessary.</param>
+    /// <returns>A list of TorrentInfoResult, an empty list if nothing is found, null if request failed.</returns>
+    public async Task<List<TorrentInfoResult>?> GetQueuedAsync(
+        bool skipCache = false,
+        CancellationToken cancellationToken = default)
     {
-        var list = await _requests.GetRequestAsync("torrents/getqueued", true, cancellationToken);
+        var queuedTorrents = await _queued.GetQueuedAsync(skipCache, "torrent", null, 0, 1000, cancellationToken);
 
-        if (list == null)
+        if (queuedTorrents != null)
         {
-            return null;
+            return queuedTorrents
+                .Select(MapQueuedTorrentToTorrentInfo)
+                .ToList();
         }
+        return null;
+    }
 
-        var queuedTorrents = JsonConvert.DeserializeObject<Response<List<QueuedTorrent>>>(list)?.Data;
-
-        var torrents = queuedTorrents.Select(torrent => new TorrentInfoResult
+    /// <summary>
+    /// Maps a QueuedTorrent instance to a new TorrentInfoResult instance.
+    /// </summary>
+    /// <param name="torrent">The QueuedTorrent to map.</param>
+    /// <returns>A new TorrentInfoResult containing the mapped data.</returns>
+    private TorrentInfoResult MapQueuedTorrentToTorrentInfo(QueuedDownload torrent)
+    {
+        return new TorrentInfoResult
         {
             Id = torrent.Id,
-            AuthId = torrent.AuthId,
             Hash = torrent.Hash,
             Name = torrent.Name,
             Magnet = torrent.Magnet,
@@ -105,10 +111,9 @@ public class TorrentsApi
             DownloadSpeed = 0,
             Seeds = 0,
             UpdatedAt = torrent.CreatedAt
-        }).ToList();
-
-        return torrents;
+        };
     }
+
 
     /// <summary>
     /// Retrieves detailed information about a specific torrent by its ID.
@@ -128,7 +133,7 @@ public class TorrentsApi
     {
         var currentTorrent = await _requests.GetRequestAsync($"torrents/mylist?bypass_cache={skipCache}", true, cancellationToken);
 
-        if (currentTorrent != null) 
+        if (currentTorrent != null)
         {
             var torrent = JsonConvert.DeserializeObject<Response<TorrentInfoResult?>>(currentTorrent)?.Data;
             if (torrent != null)
@@ -137,17 +142,11 @@ public class TorrentsApi
             }
         }
 
-        var queuedTorrents = await GetQueuedAsync(skipCache, cancellationToken);
+        var queuedTorrent = await GetQueuedAsync(skipCache, cancellationToken);
 
-        if (queuedTorrents != null)
+        if (queuedTorrent != null)
         {
-            foreach (var torrent in queuedTorrents)
-            {
-                if (torrent.Id == id)
-                {
-                    return torrent;
-                }
-            }
+            return queuedTorrent[0];
         }
 
         return null;

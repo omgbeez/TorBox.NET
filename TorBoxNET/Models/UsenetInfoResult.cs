@@ -35,7 +35,7 @@ namespace TorBoxNET
         public long Eta { get; set; }
 
         [JsonProperty("progress")]
-        public long Progress { get; set; }
+        public double Progress { get; set; }
 
         [JsonProperty("size")]
         public long Size { get; set; }

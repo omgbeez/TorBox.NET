@@ -8,6 +8,7 @@ public class TorBoxNetClient
 {
     private readonly Store _store = new();
 
+    public QueuedApi Queued { get; }
     public TorrentsApi Torrents { get; }
     public UsenetApi Usenet { get; }
     public UserApi User { get; }
@@ -34,8 +35,9 @@ public class TorBoxNetClient
 
         var client = httpClient ?? new HttpClient();
 
-        Torrents = new TorrentsApi(client, _store);
-        Usenet = new UsenetApi(client, _store);
+        Queued = new QueuedApi(client, _store);
+        Torrents = new TorrentsApi(client, _store, Queued);
+        Usenet = new UsenetApi(client, _store, Queued);
         User = new UserApi(client, _store);
     }
 

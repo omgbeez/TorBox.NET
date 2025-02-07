@@ -4,13 +4,10 @@ using System.Collections.Generic;
 
 namespace TorBoxNET
 {
-    public class QueuedTorrent
+    public class QueuedDownload
     {
         [JsonProperty("id")]
         public int Id { get; set; }
-
-        [JsonProperty("auth_id")]
-        public string AuthId { get; set; } = null!;
 
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; }

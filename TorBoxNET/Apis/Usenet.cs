@@ -8,11 +8,13 @@ public class UsenetApi
 {
     private readonly Requests _requests;
     private readonly Store _store;
+    private readonly QueuedApi _queued;
 
-    internal UsenetApi(HttpClient httpClient, Store store)
+    internal UsenetApi(HttpClient httpClient, Store store, QueuedApi queued)
     {
         _requests = new Requests(httpClient, store);
         _store = store;
+        _queued = queued;
     }
 
     /// <summary>
@@ -39,6 +41,54 @@ public class UsenetApi
 
         return JsonConvert.DeserializeObject<Response<List<UsenetInfoResult>>>(list)?.Data;
     }
+
+    /// <summary>
+    /// Fetches the list of active usenet downloads for the user.
+    /// </summary>
+    /// <param name="skipCache">
+    /// Whether to bypass the cache and retrieve fresh data from the server. Defaults to false.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// A token to cancel the task if necessary.
+    /// </param>
+    /// <returns>
+    /// A list of usenet downloads if the request succeeds, otherwise null.
+    /// </returns>
+    public async Task<List<UsenetInfoResult>?> GetQueuedAsync(bool skipCache = false, CancellationToken cancellationToken = default)
+    {
+
+        var queuedDownloads = await _queued.GetQueuedAsync(skipCache, "usenet", null, 0, 1000, cancellationToken);
+
+        if (queuedDownloads != null)
+        {
+            return queuedDownloads
+                .Select(MapQueuedDownloadToUsenetInfo)
+                .ToList();
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Maps a QueuedTorrent instance to a new TorrentInfoResult instance.
+    /// </summary>
+    /// <param name="torrent">The QueuedTorrent to map.</param>
+    /// <returns>A new TorrentInfoResult containing the mapped data.</returns>
+    private UsenetInfoResult MapQueuedDownloadToUsenetInfo(QueuedDownload download)
+    {
+        return new UsenetInfoResult
+        {
+            Id = download.Id,
+            Hash = download.Hash,
+            Name = download.Name,
+            CreatedAt = download.CreatedAt,
+            DownloadState = "queued",
+            Progress = 0.0,
+            Files = [],
+            DownloadSpeed = 0,
+            UpdatedAt = download.CreatedAt
+        };
+    }
+
 
     /// <summary>
     /// Retrieves detailed information about a specific usenet download by its hash.
