@@ -5,15 +5,8 @@ using System.Xml.Linq;
 
 namespace TorBoxNET;
 
-public class QueuedApi
+public interface IQueuedApi
 {
-    private readonly Requests _requests;
-
-    internal QueuedApi(HttpClient httpClient, Store store)
-    {
-        _requests = new Requests(httpClient, store);
-    }
-
     /// <summary>
     /// Gets the list of user's queued downloads. If an ID is supplied, returns a list containing one download.
     /// </summary>
@@ -24,6 +17,25 @@ public class QueuedApi
     /// <param name="limit">Limits the number of returned items. Defaults to 1000.</param>
     /// <param name="cancellationToken">A token to cancel the task if necessary.</param>
     /// <returns>A list of TorrentInfoResult, an empty list if nothing is found, null if request failed.</returns>
+    Task<List<QueuedDownload>?> GetQueuedAsync(
+        bool skipCache = false,
+        string type = "torrent",
+        int? id = null,
+        int offset = 0,
+        int limit = 1000,
+        CancellationToken cancellationToken = default);
+}
+
+public class QueuedApi : IQueuedApi
+{
+    private readonly Requests _requests;
+
+    internal QueuedApi(HttpClient httpClient, Store store)
+    {
+        _requests = new Requests(httpClient, store);
+    }
+
+    /// <inheritdoc />
     public async Task<List<QueuedDownload>?> GetQueuedAsync(
         bool skipCache = false,
         string type = "torrent",
