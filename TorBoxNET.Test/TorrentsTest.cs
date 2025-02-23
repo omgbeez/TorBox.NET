@@ -26,6 +26,8 @@ public class TorrentsTest
     {
         var result = await _client.Torrents.GetTotal();
 
+        _output.WriteLine(result.ToString());
+
         Assert.NotEqual(-1, result);
     }
 
@@ -33,6 +35,11 @@ public class TorrentsTest
     public async Task CurrentTorrents()
     {
         var result = await _client.Torrents.GetCurrentAsync(true);
+
+        foreach (var torrent in result)
+        {
+            _output.WriteLine(torrent.Name);
+        }
 
         Assert.NotNull(result);
     }
@@ -53,6 +60,8 @@ public class TorrentsTest
     public async Task Info()
     {
         var result = await _client.Torrents.GetHashInfoAsync("dd8255ecdc7ca55fb0bbf81323d87062db1f6d1c");
+
+        _output.WriteLine(result.Name);
 
         Assert.NotNull(result);
     }
