@@ -243,7 +243,7 @@ public class TorrentsApi : ITorrentsApi
     /// <inheritdoc />
     public async Task<TorrentInfoResult?> GetIdInfoAsync(int id, bool skipCache = false, CancellationToken cancellationToken = default)
     {
-        var currentTorrent = await _requests.GetRequestAsync($"torrents/mylist?bypass_cache={skipCache}", true, cancellationToken);
+        var currentTorrent = await _requests.GetRequestAsync($"torrents/mylist?id={id}&bypass_cache={skipCache}", true, cancellationToken);
 
         if (currentTorrent != null)
         {
