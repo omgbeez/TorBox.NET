@@ -21,4 +21,25 @@ public class AvailableUsenet
     /// </summary>
     [JsonProperty("hash")]
     public string Hash { get; set; } = null!;
+
+    /// <summary>
+    /// Usenet files
+    /// </summary>
+    [JsonProperty("files")]
+    public List<AvailableUsenetFile>? Files { get; set; } = null!;
+}
+
+public class AvailableUsenetFile
+{
+    /// <summary>
+    /// File name
+    /// </summary>
+    [JsonProperty("name")]
+    public string Name { get; set; } = null!;
+
+    /// <summary>
+    /// File size
+    /// </summary>
+    [JsonProperty("size")]
+    public long Size { get; set; }
 }
