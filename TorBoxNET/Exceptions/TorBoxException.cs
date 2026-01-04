@@ -3,10 +3,10 @@
 public class TorBoxException : Exception
 {
     public TorBoxException(String? error, String? detail)
-        : base(GetMessage(error) ?? error)
+        : base(detail ?? error)
     {
         ErrorDetail = detail;
-        Error = GetMessage(error) ?? "NULL_DETAIL_ERROR";
+        Error = error ?? "NULL_DETAIL_ERROR";
     }
 
     public String Error { get; }
