@@ -78,7 +78,7 @@ public interface ITorrentsApi
     /// <returns>
     /// Information about the torrent if found, otherwise null.
     /// </returns>
-    Task<TorrentInfoResult?> GetHashInfoAsync(string hash, bool skipCache = false, bool as_queued = false, CancellationToken cancellationToken = default);
+    Task<TorrentInfoResult?> GetHashInfoAsync(string hash, bool skipCache = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds a torrent file to the torrent client.
@@ -112,7 +112,7 @@ public interface ITorrentsApi
     /// <returns>
     /// The response containing information about the added torrent.
     /// </returns>
-    Task<Response<TorrentAddResult>> AddMagnetAsync(string magnet, int seeding = 1, bool allowZip = false, string? name = null, CancellationToken cancellationToken = default);
+    Task<Response<TorrentAddResult>> AddMagnetAsync(string magnet, int seeding = 1, bool allowZip = false, string? name = null, bool as_queued = false, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Modifies the state of a torrent (e.g., pause, resume, reannounce, delete).
